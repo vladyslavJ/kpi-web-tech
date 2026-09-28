@@ -1,0 +1,111 @@
+:host {
+  display: grid;
+  height: 100dvh;
+  grid-template:
+    'top top' auto
+    'banner banner' auto
+    'messages people' 1fr
+    'composer people' auto
+    / 1fr 16rem;
+}
+
+.topbar {
+  grid-area: top;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1.25rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.title,
+.me {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+h1 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.room-label {
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.status {
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.status[data-status='connected'] {
+  color: var(--success);
+}
+
+.status[data-status='reconnecting'] {
+  color: var(--warning);
+}
+
+.status[data-status='disconnected'] {
+  color: var(--danger);
+}
+
+.nickname {
+  color: var(--muted);
+}
+
+.banner {
+  grid-area: banner;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0;
+  padding: 0.6rem 1.25rem;
+  background: var(--system);
+  color: var(--system-text);
+}
+
+app-message-list {
+  grid-area: messages;
+  min-height: 0;
+}
+
+app-participant-list {
+  grid-area: people;
+  min-height: 0;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+}
+
+app-message-composer {
+  grid-area: composer;
+}
+
+@media (max-width: 720px) {
+  :host {
+    grid-template:
+      'top' auto
+      'banner' auto
+      'people' auto
+      'messages' 1fr
+      'composer' auto
+      / 1fr;
+  }
+
+  app-participant-list {
+    border-left: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nickname {
+    display: none;
+  }
+}

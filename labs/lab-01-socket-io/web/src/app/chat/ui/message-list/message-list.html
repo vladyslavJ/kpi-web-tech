@@ -1,0 +1,36 @@
+<ol
+  #scroller
+  class="list"
+  role="log"
+  aria-live="polite"
+  aria-label="Повідомлення чату"
+  (scroll)="onScroll()"
+>
+  @for (message of messages(); track message.id) {
+    @switch (message.type) {
+      @case ('system') {
+        <li class="system">
+          <span>{{ message.text }}</span>
+          <time [attr.datetime]="message.sentAt">{{ message.sentAt | date: 'HH:mm:ss' }}</time>
+        </li>
+      }
+      @case ('presence') {
+        <li class="presence" [attr.data-event]="message.event">
+          <span>{{ presenceText(message) }}</span>
+          <time [attr.datetime]="message.sentAt">{{ message.sentAt | date: 'HH:mm:ss' }}</time>
+        </li>
+      }
+      @case ('user') {
+        <li class="bubble" [class.own]="isOwn(message)">
+          <div class="meta">
+            <span class="author">{{ message.author.nickname }}</span>
+            <time [attr.datetime]="message.sentAt">{{ message.sentAt | date: 'HH:mm:ss' }}</time>
+          </div>
+          <p class="text">{{ message.text }}</p>
+        </li>
+      }
+    }
+  } @empty {
+    <li class="empty">Поки що тихо. Напишіть перше повідомлення!</li>
+  }
+</ol>

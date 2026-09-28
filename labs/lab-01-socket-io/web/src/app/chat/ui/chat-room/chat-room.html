@@ -1,0 +1,38 @@
+<header class="topbar">
+  <div class="title">
+    <h1><span class="room-label">Кімната</span> {{ store.room()?.name }}</h1>
+    <span class="status" role="status" [attr.data-status]="store.status()">{{
+      statusLabel()
+    }}</span>
+  </div>
+  <div class="me">
+    <span class="nickname"
+      >Ви: <strong>{{ store.self()?.nickname }}</strong></span
+    >
+    <button type="button" class="ghost" (click)="leave()">Вийти</button>
+  </div>
+</header>
+
+@switch (store.status()) {
+  @case ('reconnecting') {
+    <p class="banner">
+      З’єднання втрачено. Перепідключаємося — пропущені повідомлення підтягнуться з історії.
+    </p>
+  }
+  @case ('disconnected') {
+    <p class="banner">
+      Сервер закрив з’єднання.
+      <button type="button" class="secondary" (click)="leave()">Увійти знову</button>
+    </p>
+  }
+}
+
+<app-message-list [messages]="store.messages()" [ownIds]="store.ownIds()" />
+<app-participant-list [participants]="store.participants()" [selfId]="store.self()?.id ?? null" />
+<app-message-composer
+  [(draft)]="draft"
+  [connected]="store.canSend()"
+  [sending]="store.sending()"
+  [error]="store.sendError()"
+  (send)="send()"
+/>

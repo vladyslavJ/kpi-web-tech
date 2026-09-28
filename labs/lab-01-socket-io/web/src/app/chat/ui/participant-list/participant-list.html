@@ -1,0 +1,16 @@
+<h2 id="people-title">
+  Онлайн <span class="count">{{ participants().length }}</span>
+</h2>
+<ul aria-labelledby="people-title">
+  @for (participant of participants(); track participant.id) {
+    <li [class.self]="participant.id === selfId()">
+      <span class="avatar" aria-hidden="true" [style.--hue]="hue(participant.nickname)">
+        {{ initial(participant.nickname) }}
+      </span>
+      <span class="name">{{ participant.nickname }}</span>
+      @if (participant.id === selfId()) {
+        <span class="you">(ви)</span>
+      }
+    </li>
+  }
+</ul>

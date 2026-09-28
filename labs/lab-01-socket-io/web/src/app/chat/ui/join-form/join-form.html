@@ -1,0 +1,57 @@
+<section class="card" aria-labelledby="join-title">
+  <p class="eyebrow">Лабораторна робота №1 · Socket.IO</p>
+  <h1 id="join-title">Чат у реальному часі</h1>
+  <p class="lead">
+    Оберіть нікнейм і кімнату. Кожен, хто введе ту саму назву кімнати, потрапить до вас.
+  </p>
+
+  <form [formRoot]="form">
+    <label for="nickname">Нікнейм</label>
+    <input
+      id="nickname"
+      type="text"
+      autocomplete="nickname"
+      placeholder="Наприклад, Владислав"
+      [formField]="form.nickname"
+      [attr.aria-invalid]="nicknameError() !== null"
+      autofocus
+    />
+    @if (nicknameError(); as error) {
+      <p class="error" role="alert">{{ error }}</p>
+    }
+
+    <label for="room">Кімната</label>
+    <input
+      id="room"
+      type="text"
+      autocomplete="off"
+      placeholder="Наприклад, ІС-33"
+      [formField]="form.room"
+      [attr.aria-invalid]="roomError() !== null"
+    />
+    @if (roomError(); as error) {
+      <p class="error" role="alert">{{ error }}</p>
+    }
+
+    <p class="hint">Нікнейм і назва кімнати: {{ hint }}. Регістр у назві кімнати не важливий.</p>
+
+    @if (store.joinError(); as error) {
+      <p class="error" role="alert">{{ error }}</p>
+    }
+
+    <div class="actions">
+      @if (store.connecting()) {
+        <button type="button" class="secondary" (click)="cancel()">Скасувати</button>
+        <p class="status" role="status">
+          {{
+            store.status() === 'reconnecting'
+              ? 'Сервер недоступний, повторюємо спробу…'
+              : 'Підключення…'
+          }}
+        </p>
+      } @else {
+        <button type="submit">Увійти в кімнату</button>
+      }
+    </div>
+  </form>
+</section>

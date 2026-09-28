@@ -1,0 +1,27 @@
+<form (submit)="$event.preventDefault(); submit()">
+  <label class="visually-hidden" for="message">Повідомлення</label>
+  <textarea
+    id="message"
+    rows="2"
+    placeholder="Повідомлення… Enter — надіслати, Shift+Enter — новий рядок"
+    [value]="draft()"
+    [attr.maxlength]="maxLength"
+    (input)="onInput($event)"
+    (keydown)="onKeydown($event)"
+    aria-describedby="composer-meta"
+  ></textarea>
+  <button type="submit" [disabled]="!canSubmit()">
+    {{ sending() ? 'Надсилання…' : 'Надіслати' }}
+  </button>
+
+  <div id="composer-meta" class="meta">
+    @if (error(); as message) {
+      <span class="error" role="alert">{{ message }}</span>
+    } @else if (!connected()) {
+      <span>Немає з’єднання — надіслати можна буде, щойно воно відновиться.</span>
+    }
+    <span class="counter" [class.over]="length() > maxLength"
+      >{{ length() }} / {{ maxLength }}</span
+    >
+  </div>
+</form>

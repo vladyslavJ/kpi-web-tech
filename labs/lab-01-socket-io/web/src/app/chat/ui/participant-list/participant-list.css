@@ -1,0 +1,77 @@
+:host {
+  display: block;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.75rem;
+  color: var(--muted);
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.count {
+  padding: 0 0.5rem;
+  background: var(--surface-2);
+  color: var(--text);
+  border-radius: 999px;
+}
+
+ul {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+li {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.avatar {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  background: hsl(var(--hue, 220) 55% 45%);
+  color: #fff;
+  border-radius: 50%;
+  font-weight: 700;
+}
+
+.name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.self .name {
+  font-weight: 600;
+}
+
+.you {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+@media (max-width: 720px) {
+  :host {
+    padding: 0.6rem 1rem;
+  }
+
+  ul {
+    grid-auto-columns: max-content;
+    grid-auto-flow: column;
+    overflow-x: auto;
+  }
+}
