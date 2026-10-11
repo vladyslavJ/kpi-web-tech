@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 if [ -z "${BASH_VERSION:-}" ]; then
-  echo "Запусти скрипт через bash: ./run.sh <dev|prod>" >&2
+  echo "Run this script with bash: ./run.sh <dev|prod>" >&2
   exit 1
 fi
 
@@ -23,10 +23,10 @@ SERVICE_PIDS=()
 
 usage() {
   cat <<EOF
-Використання: ./run.sh <dev|prod>
+Usage: ./run.sh <dev|prod>
 
-  dev   режим розробки: http://localhost:${WEB_PORT}, перезапуск і перезбірка при змінах
-  prod  перевірка типів і прод-збірка, потім сервер роздає клієнт: http://localhost:${API_PORT}
+  dev   development mode at http://localhost:${WEB_PORT}, restarts and rebuilds on code changes
+  prod  type check and production build, then the server serves the client at http://localhost:${API_PORT}
 EOF
 }
 
@@ -49,19 +49,23 @@ fail() {
 
 check_requirements() {
   if (( BASH_VERSINFO[0] < 4 || (BASH_VERSINFO[0] == 4 && BASH_VERSINFO[1] < 3) )); then
-    fail "Потрібен bash 4.3 або новіший, зараз ${BASH_VERSION}"
+    fail "bash 4.3 or newer is required, found ${BASH_VERSION}"
   fi
-  command -v setsid >/dev/null 2>&1 || fail "Не знайдено setsid (пакет util-linux)"
-  command -v node >/dev/null 2>&1 || fail "Не знайдено Node.js, потрібна версія 24+"
-  command -v npm >/dev/null 2>&1 || fail "Не знайдено npm"
+  command -v setsid >/dev/null 2>&1 || fail "setsid not found (install the util-linux package)"
+  command -v node >/dev/null 2>&1 || fail "Node.js not found, version 24+ is required"
+  command -v npm >/dev/null 2>&1 || fail "npm not found"
   local node_major
   node_major="$(node -p 'process.versions.node.split(".")[0]')"
-  (( node_major >= 24 )) || fail "Потрібен Node.js 24+, зараз $(node --version)"
+  (( node_major >= 24 )) || fail "Node.js 24+ is required, found $(node --version)"
+}
+
+port_open() {
+  (exec 3<>"/dev/tcp/localhost/$1") 2>/dev/null
 }
 
 ensure_port_free() {
-  if (exec 3<>"/dev/tcp/localhost/$1") 2>/dev/null; then
-    fail "Порт $1 уже зайнятий: зупини процес, який його використовує"
+  if port_open "$1"; then
+    fail "Port $1 is already in use: stop the process that is using it"
   fi
 }
 
@@ -70,7 +74,7 @@ install_dependencies() {
   for app in "${APPS[@]}"; do
     dir="$ROOT/$app"
     if [[ ! -d "$dir/node_modules" || "$dir/package-lock.json" -nt "$dir/node_modules/.package-lock.json" ]]; then
-      info "$app: встановлюю залежності"
+      info "$app: installing dependencies"
       (cd "$dir" && npm ci --no-audit --no-fund)
     fi
   done
@@ -79,7 +83,7 @@ install_dependencies() {
 build_apps() {
   local app
   for app in "${APPS[@]}"; do
-    info "$app: збірка"
+    info "$app: building"
     (cd "$ROOT/$app" && npm run build --no-progress)
   done
 }
@@ -100,6 +104,31 @@ start_service() {
   SERVICE_PIDS+=("$!")
 }
 
+all_services_running() {
+  local pid
+  for pid in "${SERVICE_PIDS[@]}"; do
+    kill -0 "$pid" 2>/dev/null || return 1
+  done
+}
+
+wait_until_ready() {
+  local port ready
+  while all_services_running; do
+    ready=1
+    for port in "$@"; do
+      if ! port_open "$port"; then
+        ready=0
+        break
+      fi
+    done
+    if (( ready )); then
+      return 0
+    fi
+    sleep 0.5
+  done
+  return 1
+}
+
 any_service_alive() {
   local pid
   for pid in "${SERVICE_PIDS[@]}"; do
@@ -113,7 +142,7 @@ any_service_alive() {
 stop_services() {
   (( ${#SERVICE_PIDS[@]} > 0 )) || return 0
   trap '' INT TERM
-  info "зупиняю сервіси"
+  info "stopping services"
   local pid deadline=$(( SECONDS + STOP_TIMEOUT_SECONDS ))
   for pid in "${SERVICE_PIDS[@]}"; do
     kill -TERM -- "-$pid" 2>/dev/null || true
@@ -126,7 +155,7 @@ stop_services() {
   done
   wait 2>/dev/null || true
   SERVICE_PIDS=()
-  info "зупинено"
+  info "stopped"
 }
 
 main() {
@@ -168,19 +197,28 @@ main() {
   trap 'exit 143' TERM
   export -f prefix_lines
 
+  local app_port ports
   if [[ "$mode" == dev ]]; then
+    info "starting in development mode"
     start_service api dev '35'
     start_service web dev '32'
-    info "режим dev: відкрий http://localhost:${WEB_PORT}, Ctrl+C зупиняє все"
+    app_port="$WEB_PORT"
+    ports=("$API_PORT" "$WEB_PORT")
   else
+    info "starting in production mode"
     export STATIC_DIR="$ROOT/web/dist/web/browser"
     start_service api start '35'
-    info "режим prod: відкрий http://localhost:${API_PORT}, Ctrl+C зупиняє все"
+    app_port="$API_PORT"
+    ports=("$API_PORT")
+  fi
+
+  if wait_until_ready "${ports[@]}"; then
+    info "$(paint '1;32' "Application is ready to use: http://localhost:${app_port}") (Ctrl+C to stop)"
   fi
 
   local status=0
   wait -n || status=$?
-  info "один із сервісів завершився з кодом $status, зупиняю решту"
+  info "a service exited with code $status, stopping the rest"
   return "$status"
 }
 
