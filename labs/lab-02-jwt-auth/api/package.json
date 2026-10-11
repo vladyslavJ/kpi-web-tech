@@ -1,0 +1,29 @@
+{
+  "name": "lab-02-jwt-auth-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Registration, JWT authentication and role-based access",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "NODE_ENV=development node --watch src/main.ts",
+    "build": "tsc --noEmit",
+    "start": "NODE_ENV=production node src/main.ts",
+    "test": "node --test --test-reporter=spec \"../tmp/tests/api/**/*.test.ts\""
+  },
+  "dependencies": {
+    "express": "^5.3.0",
+    "express-rate-limit": "^8.7.1",
+    "jose": "^6.2.12",
+    "pino": "^10.4.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.19.2",
+    "pino-pretty": "^13.2.0",
+    "typescript": "^7.0.2"
+  }
+}

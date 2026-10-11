@@ -1,0 +1,111 @@
+:host {
+  display: block;
+}
+
+.panel {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.meta,
+.note,
+.countdown p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.countdown {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.bar {
+  height: 0.5rem;
+  overflow: hidden;
+  background: var(--surface-2);
+  border-radius: 999px;
+}
+
+.bar span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  border-radius: inherit;
+  transition: width 1s linear;
+}
+
+.label {
+  margin: 0 0 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.raw,
+pre {
+  display: block;
+  margin: 0;
+  padding: 0.75rem;
+  background: var(--surface-2);
+  border-radius: 10px;
+  font-family: ui-monospace, 'Cascadia Code', 'JetBrains Mono', Menlo, monospace;
+  font-size: 0.8rem;
+}
+
+.raw {
+  word-break: break-all;
+}
+
+pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.decoded {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: 0.9rem;
+}
+
+.part-header {
+  color: #d6336c;
+}
+
+.part-payload {
+  color: #7048e8;
+}
+
+.part-signature {
+  color: #1c7ed6;
+}
+
+@media (prefers-color-scheme: dark) {
+  .part-header {
+    color: #f783ac;
+  }
+
+  .part-payload {
+    color: #b197fc;
+  }
+
+  .part-signature {
+    color: #74c0fc;
+  }
+}

@@ -1,0 +1,40 @@
+<section class="panel" aria-labelledby="access-title">
+  <header>
+    <div>
+      <h2 id="access-title">Перевірка доступу</h2>
+      <p class="meta">Запити до сервера: він перевіряє підпис, термін дії токена і роль</p>
+    </div>
+    <button type="button" class="secondary" [disabled]="busy()" (click)="runAll()">
+      Перевірити все
+    </button>
+  </header>
+
+  <ul>
+    @for (row of rows(); track row.check.id) {
+      <li [attr.data-match]="row.matches">
+        <div class="request">
+          <code>{{ row.check.request }}</code>
+          <span class="description">{{ row.check.description }}</span>
+        </div>
+        <span class="expected">очікується {{ row.expected }}</span>
+        <span class="result" role="status">
+          @if (row.state.kind === 'done') {
+            {{ row.matches ? '✓' : '✗' }} {{ statusText(row.state.result) }}
+          } @else if (row.state.kind === 'pending') {
+            …
+          } @else {
+            —
+          }
+        </span>
+        <button
+          type="button"
+          class="ghost"
+          [disabled]="row.state.kind === 'pending'"
+          (click)="run(row.check)"
+        >
+          Надіслати
+        </button>
+      </li>
+    }
+  </ul>
+</section>

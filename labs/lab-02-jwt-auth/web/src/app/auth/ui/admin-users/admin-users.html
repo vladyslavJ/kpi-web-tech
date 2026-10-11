@@ -1,0 +1,82 @@
+<section class="panel" aria-labelledby="users-title">
+  <header>
+    <div>
+      <h2 id="users-title">Користувачі</h2>
+      <p class="meta">
+        Дії адміністратора: GET /api/users, PATCH /api/users/:id/role, DELETE /api/users/:id
+      </p>
+    </div>
+    <button type="button" class="ghost" [disabled]="list.isLoading()" (click)="list.reload()">
+      Оновити
+    </button>
+  </header>
+
+  @if (loadError(); as error) {
+    <p class="error" role="alert">{{ error }}</p>
+  }
+  @if (actionError(); as error) {
+    <p class="error" role="alert">{{ error }}</p>
+  }
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Користувач</th>
+          <th scope="col">Роль</th>
+          <th scope="col">Зареєстровано</th>
+          <th scope="col"><span class="visually-hidden">Дії</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (user of users(); track user.id) {
+          <tr [attr.aria-busy]="busyId() === user.id">
+            <td>
+              <strong>{{ user.username }}</strong>
+              @if (isSelf(user)) {
+                <span class="you">це ви</span>
+              }
+            </td>
+            <td>
+              <select
+                #select
+                [attr.aria-label]="'Роль користувача ' + user.username"
+                [value]="user.role"
+                [disabled]="busyId() !== null || (user.role === 'admin' && adminCount() === 1)"
+                (change)="changeRole(user, select)"
+              >
+                @for (role of roles; track role) {
+                  <option [value]="role" [selected]="role === user.role">
+                    {{ roleLabels[role] }}
+                  </option>
+                }
+              </select>
+            </td>
+            <td>{{ user.createdAt | date: 'dd.MM.yyyy HH:mm' }}</td>
+            <td class="row-actions">
+              <button
+                type="button"
+                class="ghost danger"
+                [disabled]="busyId() !== null || isSelf(user)"
+                (click)="remove(user)"
+              >
+                Видалити
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="4" class="empty">
+              {{ list.isLoading() ? 'Завантаження…' : 'Користувачів немає' }}
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <p class="hint">
+    Роль перевіряється на сервері за базою даних, тому зміна ролі діє одразу, навіть для вже виданих
+    токенів. Останнього адміністратора не можна понизити чи видалити.
+  </p>
+</section>

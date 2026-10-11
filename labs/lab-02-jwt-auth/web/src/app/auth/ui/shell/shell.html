@@ -1,0 +1,33 @@
+<header class="topbar">
+  <div class="brand">
+    <span class="eyebrow">Лабораторна робота №2</span>
+    <strong>JWT-авторизація</strong>
+  </div>
+
+  <nav aria-label="Розділи">
+    <a routerLink="/profile" routerLinkActive="active" ariaCurrentWhenActive="page">Профіль</a>
+    @if (store.isAdmin()) {
+      <a routerLink="/users" routerLinkActive="active" ariaCurrentWhenActive="page">Користувачі</a>
+    }
+  </nav>
+
+  <div class="me">
+    <span
+      class="timer"
+      role="timer"
+      [attr.data-state]="timerState()"
+      title="Час до завершення дії токена"
+    >
+      Токен: {{ store.secondsLeft() }} с
+    </span>
+    <span class="who">
+      <strong>{{ store.user()?.username }}</strong>
+      <span class="role" [attr.data-role]="store.user()?.role">{{ roleLabel() }}</span>
+    </span>
+    <button type="button" class="ghost" (click)="signOut()">Вийти</button>
+  </div>
+</header>
+
+<main>
+  <router-outlet />
+</main>

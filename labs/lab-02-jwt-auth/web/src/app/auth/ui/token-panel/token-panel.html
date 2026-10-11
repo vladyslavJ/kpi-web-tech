@@ -1,0 +1,49 @@
+<section class="panel" aria-labelledby="token-title">
+  <header>
+    <h2 id="token-title">JWT-токен</h2>
+    <span class="meta">HS256 · діє {{ lifetimeSeconds() }} с</span>
+  </header>
+
+  <div class="countdown">
+    <div
+      class="bar"
+      role="progressbar"
+      aria-label="Залишок часу дії токена"
+      [attr.aria-valuenow]="secondsLeft()"
+      aria-valuemin="0"
+      [attr.aria-valuemax]="lifetimeSeconds()"
+    >
+      <span [style.width.%]="progress()"></span>
+    </div>
+    <p>
+      Залишилось <strong>{{ secondsLeft() }} с</strong> · видано {{ issuedAt() }} · спливає
+      {{ expiresAt() }}
+    </p>
+  </div>
+
+  @if (decoded(); as jwt) {
+    <p class="label">Закодований токен (заголовок Authorization: Bearer …)</p>
+    <code class="raw"
+      ><span class="part-header">{{ jwt.parts[0] }}</span
+      >.<span class="part-payload">{{ jwt.parts[1] }}</span
+      >.<span class="part-signature">{{ jwt.parts[2] }}</span></code
+    >
+
+    <div class="decoded">
+      <div>
+        <p class="label part-header">Header</p>
+        <pre>{{ headerJson() }}</pre>
+      </div>
+      <div>
+        <p class="label part-payload">Payload</p>
+        <pre>{{ payloadJson() }}</pre>
+      </div>
+    </div>
+    <p class="note">
+      Payload лише закодований у base64url, а не зашифрований: його може прочитати будь-хто. Захищає
+      токен підпис — сервер перевіряє його секретним ключем і відхиляє будь-які зміни.
+    </p>
+  } @else {
+    <p class="error">Не вдалося розібрати токен</p>
+  }
+</section>

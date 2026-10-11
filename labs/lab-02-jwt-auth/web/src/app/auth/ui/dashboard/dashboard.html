@@ -1,0 +1,57 @@
+<div class="grid">
+  <section class="panel profile" aria-labelledby="profile-title">
+    <header>
+      <h2 id="profile-title">Профіль</h2>
+      <button
+        type="button"
+        class="ghost"
+        [disabled]="profile.isLoading()"
+        (click)="profile.reload()"
+      >
+        Оновити
+      </button>
+    </header>
+    <p class="meta">Дані отримано із захищеного маршруту GET /api/me</p>
+
+    @if (loadError(); as error) {
+      <p class="error" role="alert">{{ error }}</p>
+    }
+
+    @if (user(); as user) {
+      <dl>
+        <dt>Ім’я користувача</dt>
+        <dd>{{ user.username }}</dd>
+        <dt>Роль</dt>
+        <dd>
+          <span class="role" [attr.data-role]="user.role">{{ roleLabel() }} ({{ user.role }})</span>
+        </dd>
+        <dt>Ідентифікатор</dt>
+        <dd class="mono">{{ user.id }}</dd>
+        <dt>Зареєстровано</dt>
+        <dd>{{ user.createdAt | date: 'dd.MM.yyyy HH:mm:ss' }}</dd>
+      </dl>
+
+      <h3>Доступні дії</h3>
+      <ul class="actions">
+        @for (action of actions(); track action) {
+          <li>{{ action }}</li>
+        }
+      </ul>
+      @if (user.role === 'admin') {
+        <a class="link" routerLink="/users">Керувати користувачами →</a>
+      }
+    }
+  </section>
+
+  @if (store.token(); as token) {
+    <app-token-panel
+      class="token"
+      [token]="token"
+      [secondsLeft]="store.secondsLeft()"
+      [lifetimeSeconds]="store.lifetimeSeconds()"
+    />
+    @if (user(); as user) {
+      <app-access-check class="access" [token]="token" [role]="user.role" />
+    }
+  }
+</div>

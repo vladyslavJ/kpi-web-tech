@@ -1,0 +1,79 @@
+<section class="card" aria-labelledby="auth-title">
+  <p class="eyebrow">Лабораторна робота №2 · JWT</p>
+  <h1 id="auth-title">{{ isRegister() ? 'Реєстрація' : 'Вхід' }}</h1>
+  <p class="lead">
+    @if (isRegister()) {
+      Створіть обліковий запис. Пароль зберігається на сервері лише у вигляді хешу argon2id.
+    } @else {
+      Увійдіть, щоб отримати JWT-токен. Він діє обмежений час, після чого потрібно увійти знову.
+    }
+  </p>
+
+  <nav class="tabs" aria-label="Режим">
+    <a routerLink="/login" [attr.aria-current]="isRegister() ? null : 'page'">Вхід</a>
+    <a routerLink="/register" [attr.aria-current]="isRegister() ? 'page' : null">Реєстрація</a>
+  </nav>
+
+  @if (store.notice(); as notice) {
+    <p class="notice" role="status">{{ notice }}</p>
+  }
+
+  <form [formRoot]="form">
+    <label for="username">Ім’я користувача</label>
+    <input
+      id="username"
+      type="text"
+      autocomplete="username"
+      placeholder="Наприклад, vlad.zhukov"
+      [formField]="form.username"
+      [attr.aria-invalid]="usernameError() !== null"
+      autofocus
+    />
+    @if (usernameError(); as error) {
+      <p class="error" role="alert">{{ error }}</p>
+    }
+
+    <label for="password">Пароль</label>
+    <input
+      id="password"
+      type="password"
+      [attr.autocomplete]="isRegister() ? 'new-password' : 'current-password'"
+      [formField]="form.password"
+      [attr.aria-invalid]="passwordError() !== null"
+    />
+    @if (passwordError(); as error) {
+      <p class="error" role="alert">{{ error }}</p>
+    }
+
+    @if (isRegister()) {
+      <label for="confirmation">Повторіть пароль</label>
+      <input
+        id="confirmation"
+        type="password"
+        autocomplete="new-password"
+        [formField]="form.confirmation"
+        [attr.aria-invalid]="confirmationError() !== null"
+      />
+      @if (confirmationError(); as error) {
+        <p class="error" role="alert">{{ error }}</p>
+      }
+      <p class="hint">
+        Ім’я: {{ usernameHint }}. Пароль: {{ passwordHint }}. Перший зареєстрований користувач
+        отримує роль адміністратора.
+      </p>
+    }
+
+    @if (serverError(); as error) {
+      <p class="error" role="alert">{{ error }}</p>
+    }
+
+    <div class="actions">
+      <button type="submit" [disabled]="form().submitting()">
+        {{ isRegister() ? 'Зареєструватися' : 'Увійти' }}
+      </button>
+      @if (form().submitting()) {
+        <p class="status" role="status">Зачекайте…</p>
+      }
+    </div>
+  </form>
+</section>
