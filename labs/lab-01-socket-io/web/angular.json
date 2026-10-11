@@ -83,8 +83,10 @@
         "test": {
           "builder": "@angular/build:unit-test",
           "options": {
+            "tsConfig": "../tmp/tests/web/tsconfig.spec.json",
             "include": [
-              "../test/**/*.spec.ts"
+              "../../tmp/tests/web/unit/**/*.spec.ts",
+              "../../tmp/tests/web/integration/**/*.spec.ts"
             ]
           }
         }

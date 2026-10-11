@@ -11,7 +11,7 @@
     "dev": "NODE_ENV=development node --watch src/main.ts",
     "build": "tsc --noEmit",
     "start": "NODE_ENV=production node src/main.ts",
-    "test": "node --test --test-reporter=spec \"test/**/*.test.ts\""
+    "test": "node --test --test-reporter=spec \"../tmp/tests/api/**/*.test.ts\""
   },
   "dependencies": {
     "pino": "^10.3.1",
