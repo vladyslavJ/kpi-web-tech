@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Telegram-бот · Лабораторна робота №3</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+  </head>
+  <body>
+    <main class="card">
+      <p class="eyebrow">Лабораторна робота №3</p>
+      <h1>Telegram-бот з AI</h1>
+      <p class="lead">Меню з інформацією про студента та запити до штучного інтелекту.</p>
+
+      {% if status.online %}
+        <p class="state" data-state="ok">Бот працює</p>
+      {% else %}
+        <p class="state" data-state="down">Немає зв’язку з Telegram</p>
+      {% endif %}
+
+      <dl>
+        <div>
+          <dt>Бот</dt>
+          <dd>
+            {% if status.username %}
+              <a href="https://t.me/{{ status.username }}">@{{ status.username }}</a>
+            {% else %}
+              —
+            {% endif %}
+          </dd>
+        </div>
+        <div>
+          <dt>Режим</dt>
+          <dd>{{ 'Вебхук' if status.mode == 'webhook' else 'Long polling' }}</dd>
+        </div>
+        {% if status.mode == 'webhook' and status.online %}
+          <div>
+            <dt>Вебхук</dt>
+            <dd>
+              {% if status.webhook_registered %}
+                <span class="ok">зареєстрований</span>
+              {% else %}
+                <span class="bad">не зареєстрований — перезапустіть вебзастосунок</span>
+              {% endif %}
+              {% if status.pending_updates %} · у черзі {{ status.pending_updates }}{% endif %}
+            </dd>
+          </div>
+          {% if status.webhook_error %}
+            <div>
+              <dt>Остання помилка</dt>
+              <dd class="bad">{{ status.webhook_error }}</dd>
+            </div>
+          {% endif %}
+        {% endif %}
+        <div>
+          <dt>AI-модель</dt>
+          <dd><code>{{ status.model }}</code></dd>
+        </div>
+        <div>
+          <dt>Запущено</dt>
+          <dd>{{ status.started_at.strftime('%d.%m.%Y %H:%M') }}</dd>
+        </div>
+      </dl>
+
+      {% if status.username %}
+        <a class="button" href="https://t.me/{{ status.username }}">Відкрити бота в Telegram</a>
+      {% endif %}
+
+      <footer>{{ student.short_name }} · {{ student.group }} · варіант {{ student.variant }}</footer>
+    </main>
+  </body>
+</html>
