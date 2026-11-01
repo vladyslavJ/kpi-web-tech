@@ -1,0 +1,80 @@
+<section class="panel" aria-labelledby="parts-title">
+  <div class="panel-header">
+    <div>
+      <h1 id="parts-title">Деталі</h1>
+      <p class="meta">GET і POST /api/parts · GET, PUT і DELETE /api/parts/:id</p>
+    </div>
+    <div class="toolbar">
+      <button type="button" class="ghost small" [disabled]="parts.isLoading()" (click)="reload()">
+        Оновити
+      </button>
+      <a class="button small" routerLink="/parts/new">Додати деталь</a>
+    </div>
+  </div>
+
+  @if (loadError(); as error) {
+    <p class="error" role="alert">{{ error }}</p>
+  }
+  @if (actionError(); as error) {
+    <p class="error" role="alert">{{ error }}</p>
+  }
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Позначення</th>
+          <th scope="col">Найменування</th>
+          <th scope="col">Матеріал</th>
+          <th scope="col">Технологічна карта</th>
+          <th scope="col">Оновлено</th>
+          <th scope="col"><span class="visually-hidden">Дії</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of rows(); track row.part.id) {
+          <tr [attr.aria-busy]="busyId() === row.part.id">
+            <td class="code">{{ row.part.designation }}</td>
+            <td>{{ row.part.name }}</td>
+            <td>{{ row.part.material ?? '—' }}</td>
+            <td>
+              @if (row.cardId; as cardId) {
+                <a [routerLink]="['/process-cards', cardId]">Відкрити карту</a>
+              } @else {
+                <a routerLink="/process-cards/new" [queryParams]="{ partId: row.part.id }">
+                  Створити карту
+                </a>
+              }
+            </td>
+            <td>{{ row.part.updatedAt | date: 'dd.MM.yyyy HH:mm' }}</td>
+            <td class="actions">
+              <a class="button ghost small" [routerLink]="['/parts', row.part.id, 'edit']">
+                Редагувати
+              </a>
+              <button
+                type="button"
+                class="ghost small danger"
+                [disabled]="busyId() !== null || row.cardId !== null"
+                [attr.title]="row.cardId ? 'Спершу видаліть технологічну карту деталі' : null"
+                (click)="remove(row.part)"
+              >
+                Видалити
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" class="empty">
+              {{ parts.isLoading() ? 'Завантаження…' : 'Деталей ще немає' }}
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <p class="hint">
+    Позначення деталі унікальне й не залежить від регістру. Деталь із технологічною картою не можна
+    видалити, доки існує карта.
+  </p>
+</section>

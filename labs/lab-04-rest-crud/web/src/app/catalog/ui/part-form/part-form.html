@@ -1,0 +1,73 @@
+<section class="panel" aria-labelledby="part-form-title">
+  <div class="panel-header">
+    <div>
+      <p class="eyebrow">Деталі</p>
+      <h1 id="part-form-title">{{ isEdit() ? 'Редагування деталі' : 'Нова деталь' }}</h1>
+      <p class="meta">{{ isEdit() ? 'PUT /api/parts/:id' : 'POST /api/parts' }}</p>
+    </div>
+  </div>
+
+  @if (loadError(); as error) {
+    <p class="error" role="alert">{{ error }}</p>
+  } @else if (!ready()) {
+    <p class="muted" role="status">Завантаження…</p>
+  } @else {
+    <form class="form" [formRoot]="form" novalidate>
+      <div class="field">
+        <label for="designation">Позначення (креслярський номер)</label>
+        <input
+          id="designation"
+          class="code"
+          autocomplete="off"
+          placeholder="КПІ.301.011"
+          [formField]="form.designation"
+          [attr.aria-invalid]="errorOf(form.designation) !== null"
+        />
+        @if (errorOf(form.designation); as error) {
+          <p class="error" role="alert">{{ error }}</p>
+        } @else {
+          <p class="hint">{{ designationHint }}. Літери буде переведено у верхній регістр.</p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="name">Найменування</label>
+        <input
+          id="name"
+          autocomplete="off"
+          placeholder="Вал ведучий"
+          [formField]="form.name"
+          [attr.aria-invalid]="errorOf(form.name) !== null"
+        />
+        @if (errorOf(form.name); as error) {
+          <p class="error" role="alert">{{ error }}</p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="material">Матеріал <span class="muted">(необов’язково)</span></label>
+        <input
+          id="material"
+          autocomplete="off"
+          placeholder="Сталь 45"
+          [formField]="form.material"
+          [attr.aria-invalid]="errorOf(form.material) !== null"
+        />
+        @if (errorOf(form.material); as error) {
+          <p class="error" role="alert">{{ error }}</p>
+        }
+      </div>
+
+      @if (serverError(); as error) {
+        <p class="error" role="alert">{{ error }}</p>
+      }
+
+      <div class="form-actions">
+        <button type="submit" [disabled]="form().submitting()">
+          {{ isEdit() ? 'Зберегти зміни' : 'Додати деталь' }}
+        </button>
+        <a class="button ghost" routerLink="/parts">Скасувати</a>
+      </div>
+    </form>
+  }
+</section>

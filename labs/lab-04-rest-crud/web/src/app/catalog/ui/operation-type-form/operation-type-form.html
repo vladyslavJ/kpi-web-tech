@@ -1,0 +1,63 @@
+<section class="panel" aria-labelledby="type-form-title">
+  <div class="panel-header">
+    <div>
+      <p class="eyebrow">Види обробки</p>
+      <h1 id="type-form-title">
+        {{ isEdit() ? 'Редагування виду обробки' : 'Новий вид обробки' }}
+      </h1>
+      <p class="meta">
+        {{ isEdit() ? 'PUT /api/operation-types/:id' : 'POST /api/operation-types' }}
+      </p>
+    </div>
+  </div>
+
+  @if (loadError(); as error) {
+    <p class="error" role="alert">{{ error }}</p>
+  } @else if (!ready()) {
+    <p class="muted" role="status">Завантаження…</p>
+  } @else {
+    <form class="form" [formRoot]="form" novalidate>
+      <div class="field">
+        <label for="name">Назва</label>
+        <input
+          id="name"
+          autocomplete="off"
+          placeholder="Токарна"
+          [formField]="form.name"
+          [attr.aria-invalid]="errorOf(form.name) !== null"
+        />
+        @if (errorOf(form.name); as error) {
+          <p class="error" role="alert">{{ error }}</p>
+        } @else {
+          <p class="hint">Перша літера стане великою, назва має бути унікальною.</p>
+        }
+      </div>
+
+      <div class="field">
+        <label for="description">Опис <span class="muted">(необов’язково)</span></label>
+        <textarea
+          id="description"
+          placeholder="Обробка поверхонь обертання різцями на токарному верстаті"
+          [formField]="form.description"
+          [attr.aria-invalid]="errorOf(form.description) !== null"
+        ></textarea>
+        @if (errorOf(form.description); as error) {
+          <p class="error" role="alert">{{ error }}</p>
+        } @else {
+          <p class="hint">До {{ descriptionLimit }} символів.</p>
+        }
+      </div>
+
+      @if (serverError(); as error) {
+        <p class="error" role="alert">{{ error }}</p>
+      }
+
+      <div class="form-actions">
+        <button type="submit" [disabled]="form().submitting()">
+          {{ isEdit() ? 'Зберегти зміни' : 'Додати вид обробки' }}
+        </button>
+        <a class="button ghost" routerLink="/operation-types">Скасувати</a>
+      </div>
+    </form>
+  }
+</section>

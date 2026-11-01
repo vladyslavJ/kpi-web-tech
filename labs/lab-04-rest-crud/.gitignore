@@ -1,0 +1,17 @@
+node_modules/
+
+dist/
+out-tsc/
+*.tsbuildinfo
+
+.angular/
+
+coverage/
+
+.env
+.env.*
+!.env.example
+
+*.log
+
+tmp/

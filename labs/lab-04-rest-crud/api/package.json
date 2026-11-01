@@ -1,0 +1,28 @@
+{
+  "name": "lab-04-rest-crud-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "REST API with CRUD over MongoDB for technological process cards",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "NODE_ENV=development node --watch src/main.ts",
+    "build": "tsc --noEmit",
+    "start": "NODE_ENV=production node src/main.ts",
+    "test": "node --test --test-reporter=spec \"../tmp/tests/api/**/*.test.ts\""
+  },
+  "dependencies": {
+    "express": "^5.3.0",
+    "mongoose": "^9.11.1",
+    "pino": "^10.4.0",
+    "zod": "^4.6.6"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.19.2",
+    "pino-pretty": "^13.2.0",
+    "typescript": "^7.0.2"
+  }
+}
