@@ -1,0 +1,41 @@
+.part {
+  min-width: 11rem;
+}
+
+.part a,
+.part span {
+  display: block;
+}
+
+.part a {
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.route {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.route li {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+
+.route li + li::before {
+  content: '→';
+  color: var(--muted);
+}
+
+.route span {
+  padding: 0.05rem 0.5rem;
+  border-radius: 999px;
+  background: var(--surface-2);
+}

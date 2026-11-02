@@ -1,0 +1,37 @@
+app-api-docs {
+  display: block;
+}
+
+app-api-docs .swagger {
+  color-scheme: light;
+  overflow-x: auto;
+  padding: 0.25rem 0.5rem;
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+app-api-docs .swagger .swagger-ui,
+app-api-docs .swagger .swagger-ui .info .title,
+app-api-docs .swagger .swagger-ui .opblock-tag,
+app-api-docs .swagger .swagger-ui .opblock .opblock-summary-description {
+  font-family: inherit;
+}
+
+app-api-docs .swagger .swagger-ui .wrapper {
+  max-width: none;
+  padding: 0 0.75rem;
+}
+
+app-api-docs .swagger .swagger-ui .info {
+  margin: 1rem 0;
+}
+
+app-api-docs .swagger .swagger-ui .info .title small pre {
+  background: none;
+}
+
+app-api-docs .swagger .swagger-ui .btn.execute {
+  background: #3f5bd8;
+  border-color: #3f5bd8;
+}

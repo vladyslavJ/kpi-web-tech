@@ -1,0 +1,100 @@
+@if (loadError(); as error) {
+  <section class="panel">
+    <p class="error" role="alert">{{ error }}</p>
+    <a routerLink="/process-cards">← До списку карт</a>
+  </section>
+} @else if (view(); as view) {
+  <div class="page">
+    <section class="panel" aria-labelledby="card-title">
+      <div class="panel-header">
+        <div>
+          <p class="eyebrow">Технологічна карта</p>
+          <h1 id="card-title">
+            <span class="code">{{ view.card.part.designation }}</span> · {{ view.card.part.name }}
+          </h1>
+          <p class="meta">GET /api/process-cards/{{ view.card.id }}</p>
+        </div>
+        <div class="toolbar">
+          <a class="button ghost small" routerLink="/process-cards">До списку</a>
+          <a class="button small" [routerLink]="['/process-cards', view.card.id, 'edit']">
+            Редагувати
+          </a>
+          <button
+            type="button"
+            class="ghost small danger"
+            [disabled]="busy()"
+            (click)="remove(view.card)"
+          >
+            Видалити
+          </button>
+        </div>
+      </div>
+
+      @if (actionError(); as error) {
+        <p class="error" role="alert">{{ error }}</p>
+      }
+
+      <dl class="summary">
+        <div>
+          <dt>Матеріал</dt>
+          <dd>{{ view.card.part.material ?? '—' }}</dd>
+        </div>
+        <div>
+          <dt>Операції</dt>
+          <dd>{{ view.count }}</dd>
+        </div>
+        <div>
+          <dt>Сумарна тривалість</dt>
+          <dd>{{ view.total }}</dd>
+        </div>
+        <div>
+          <dt>Оновлено</dt>
+          <dd>{{ view.card.updatedAt | date: 'dd.MM.yyyy HH:mm' }}</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="panel" aria-labelledby="route-title">
+      <h2 id="route-title">Маршрут обробки</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col">№</th>
+              <th scope="col">Вид обробки</th>
+              <th scope="col">Обладнання</th>
+              <th scope="col" class="num">Тривалість, хв</th>
+              <th scope="col">Частка часу</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (row of view.operations; track row.operation.number) {
+              <tr>
+                <td class="code">{{ row.number }}</td>
+                <td>{{ row.operation.operationType.name }}</td>
+                <td>{{ row.operation.equipment ?? '—' }}</td>
+                <td class="num">{{ row.minutes }}</td>
+                <td class="share">
+                  <span class="bar" aria-hidden="true"
+                    ><span [style.width.%]="row.share"></span
+                  ></span>
+                </td>
+              </tr>
+            }
+          </tbody>
+          <tfoot>
+            <tr>
+              <th scope="row" colspan="3">Разом</th>
+              <td class="num">
+                <strong>{{ view.totalMinutes }}</strong>
+              </td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </section>
+  </div>
+} @else {
+  <p class="muted" role="status">Завантаження…</p>
+}

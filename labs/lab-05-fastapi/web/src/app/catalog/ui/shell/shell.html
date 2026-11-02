@@ -1,0 +1,47 @@
+<header class="topbar">
+  <a class="brand" routerLink="/">
+    <span class="eyebrow">Лабораторна робота №5</span>
+    <strong>Технологічні карти</strong>
+  </a>
+
+  <nav aria-label="Розділи">
+    <a
+      routerLink="/"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      ariaCurrentWhenActive="page"
+      >Головна</a
+    >
+    <a routerLink="/process-cards" routerLinkActive="active" ariaCurrentWhenActive="page"
+      >Технологічні карти</a
+    >
+    <a routerLink="/parts" routerLinkActive="active" ariaCurrentWhenActive="page">Деталі</a>
+    <a routerLink="/operation-types" routerLinkActive="active" ariaCurrentWhenActive="page"
+      >Види обробки</a
+    >
+    <a routerLink="/docs" routerLinkActive="active" ariaCurrentWhenActive="page">API</a>
+  </nav>
+
+  <span
+    class="badge database"
+    role="status"
+    [attr.data-tone]="database() === 'up' ? 'ok' : database() === 'down' ? 'bad' : null"
+    title="Стан підключення API до MongoDB (GET /api/health)"
+  >
+    @switch (database()) {
+      @case ('up') {
+        MongoDB підключено
+      }
+      @case ('down') {
+        MongoDB недоступна
+      }
+      @default {
+        Перевірка з’єднання…
+      }
+    }
+  </span>
+</header>
+
+<main>
+  <router-outlet />
+</main>

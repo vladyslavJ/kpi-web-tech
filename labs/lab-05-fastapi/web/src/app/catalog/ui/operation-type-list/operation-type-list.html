@@ -1,0 +1,86 @@
+<section class="panel" aria-labelledby="types-title">
+  <div class="panel-header">
+    <div>
+      <h1 id="types-title">Види обробки</h1>
+      <p class="meta">
+        GET і POST /api/operation-types · GET, PUT і DELETE /api/operation-types/:id
+      </p>
+    </div>
+    <div class="toolbar">
+      <button
+        type="button"
+        class="ghost small"
+        [disabled]="operationTypes.isLoading()"
+        (click)="reload()"
+      >
+        Оновити
+      </button>
+      <a class="button small" routerLink="/operation-types/new">Додати вид обробки</a>
+    </div>
+  </div>
+
+  @if (loadError(); as error) {
+    <p class="error" role="alert">{{ error }}</p>
+  }
+  @if (actionError(); as error) {
+    <p class="error" role="alert">{{ error }}</p>
+  }
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Назва</th>
+          <th scope="col">Опис</th>
+          <th scope="col" class="num">Операцій у картах</th>
+          <th scope="col" class="num">Загальна тривалість</th>
+          <th scope="col"><span class="visually-hidden">Дії</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of rows(); track row.operationType.id) {
+          <tr [attr.aria-busy]="busyId() === row.operationType.id">
+            <td>
+              <strong>{{ row.operationType.name }}</strong>
+            </td>
+            <td class="muted">{{ row.operationType.description ?? '—' }}</td>
+            <td class="num">{{ row.operations ?? '—' }}</td>
+            <td class="num">{{ row.duration }}</td>
+            <td class="actions">
+              <a
+                class="button ghost small"
+                [routerLink]="['/operation-types', row.operationType.id, 'edit']"
+              >
+                Редагувати
+              </a>
+              <button
+                type="button"
+                class="ghost small danger"
+                [disabled]="busyId() !== null || (row.operations ?? 0) > 0"
+                [attr.title]="
+                  (row.operations ?? 0) > 0
+                    ? 'Вид обробки використовується в технологічних картах'
+                    : null
+                "
+                (click)="remove(row.operationType)"
+              >
+                Видалити
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="5" class="empty">
+              {{ operationTypes.isLoading() ? 'Завантаження…' : 'Видів обробки ще немає' }}
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <p class="hint">
+    Назва унікальна без урахування регістру. Вид обробки, який використовується в операціях карт, не
+    можна видалити.
+  </p>
+</section>

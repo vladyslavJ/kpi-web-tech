@@ -1,0 +1,27 @@
+<section class="panel" aria-labelledby="api-title">
+  <div class="panel-header">
+    <div>
+      <p class="eyebrow">OpenAPI 3.1 · Swagger UI</p>
+      <h1 id="api-title">API</h1>
+      <p class="meta">
+        Інтерактивна документація REST API, яку FastAPI будує автоматично з моделей Pydantic.
+        Розгорніть запит, натисніть «Try it out», змініть параметри чи тіло й надішліть запит
+        кнопкою «Execute»: відповідь сервера з’явиться нижче.
+      </p>
+    </div>
+    <a class="button ghost small" [href]="openApiUrl" target="_blank" rel="noopener">
+      openapi.json
+    </a>
+  </div>
+
+  @switch (state()) {
+    @case ('loading') {
+      <p class="muted" role="status">Завантаження документації…</p>
+    }
+    @case ('failed') {
+      <p class="error" role="alert">Не вдалося завантажити Swagger UI. Оновіть сторінку.</p>
+    }
+  }
+
+  <div #swagger class="swagger" [hidden]="state() !== 'ready'"></div>
+</section>

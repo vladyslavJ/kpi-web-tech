@@ -1,0 +1,187 @@
+<section class="panel" aria-labelledby="card-form-title">
+  <div class="panel-header">
+    <div>
+      <p class="eyebrow">Технологічні карти</p>
+      <h1 id="card-form-title">
+        {{ isEdit() ? 'Редагування технологічної карти' : 'Нова технологічна карта' }}
+      </h1>
+      <p class="meta">{{ isEdit() ? 'PUT /api/process-cards/:id' : 'POST /api/process-cards' }}</p>
+    </div>
+  </div>
+
+  @if (loadError(); as error) {
+    <p class="error" role="alert">{{ error }}</p>
+  } @else if (!ready()) {
+    <p class="muted" role="status">Завантаження…</p>
+  } @else {
+    <form class="card-form" [formRoot]="form" novalidate>
+      <div class="field part">
+        <label for="part">Деталь</label>
+        <select
+          id="part"
+          [formField]="form.partId"
+          [attr.aria-invalid]="errorOf(form.partId) !== null"
+        >
+          <option value="" disabled>Оберіть деталь…</option>
+          @for (part of availableParts(); track part.id) {
+            <option [value]="part.id">{{ part.designation }} — {{ part.name }}</option>
+          }
+        </select>
+        @if (errorOf(form.partId); as error) {
+          <p class="error" role="alert">{{ error }}</p>
+        } @else if (availableParts().length === 0) {
+          <p class="notice">
+            Усі деталі вже мають технологічні карти.
+            <a routerLink="/parts/new">Додайте нову деталь</a>.
+          </p>
+        } @else {
+          <p class="hint">
+            У списку лише деталі без технологічної карти.
+            <a routerLink="/parts/new">Додати деталь</a>
+          </p>
+        }
+      </div>
+
+      <fieldset class="operations">
+        <legend>Операції маршруту</legend>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">№</th>
+                <th scope="col">Вид обробки</th>
+                <th scope="col">Обладнання</th>
+                <th scope="col">Тривалість, хв</th>
+                <th scope="col"><span class="visually-hidden">Порядок і видалення</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (
+                operation of form.operations;
+                track $index;
+                let index = $index, first = $first, last = $last
+              ) {
+                <tr>
+                  <td class="code number">{{ numbers()[index] }}</td>
+                  <td class="type">
+                    <select
+                      [formField]="operation.operationTypeId"
+                      [attr.aria-label]="'Вид обробки операції ' + numbers()[index]"
+                      [attr.aria-invalid]="errorOf(operation.operationTypeId) !== null"
+                    >
+                      <option value="" disabled>Оберіть…</option>
+                      @for (type of types(); track type.id) {
+                        <option [value]="type.id">{{ type.name }}</option>
+                      }
+                    </select>
+                    @if (errorOf(operation.operationTypeId); as error) {
+                      <p class="error">{{ error }}</p>
+                    }
+                  </td>
+                  <td>
+                    <input
+                      autocomplete="off"
+                      placeholder="Необов’язково"
+                      [formField]="operation.equipment"
+                      [attr.aria-label]="'Обладнання операції ' + numbers()[index]"
+                      [attr.aria-invalid]="errorOf(operation.equipment) !== null"
+                    />
+                    @if (errorOf(operation.equipment); as error) {
+                      <p class="error">{{ error }}</p>
+                    }
+                  </td>
+                  <td class="duration">
+                    <input
+                      type="number"
+                      step="0.1"
+                      inputmode="decimal"
+                      [formField]="operation.durationMinutes"
+                      [attr.aria-label]="'Тривалість операції ' + numbers()[index] + ', хвилин'"
+                      [attr.aria-invalid]="errorOf(operation.durationMinutes) !== null"
+                    />
+                    @if (errorOf(operation.durationMinutes); as error) {
+                      <p class="error">{{ error }}</p>
+                    }
+                  </td>
+                  <td class="actions">
+                    <button
+                      type="button"
+                      class="ghost icon"
+                      title="Перемістити вище"
+                      aria-label="Перемістити вище"
+                      [disabled]="first"
+                      (click)="moveOperation(index, -1)"
+                    >
+                      ↑
+                    </button>
+                    <button
+                      type="button"
+                      class="ghost icon"
+                      title="Перемістити нижче"
+                      aria-label="Перемістити нижче"
+                      [disabled]="last"
+                      (click)="moveOperation(index, 1)"
+                    >
+                      ↓
+                    </button>
+                    <button
+                      type="button"
+                      class="ghost icon danger"
+                      title="Видалити операцію"
+                      aria-label="Видалити операцію"
+                      (click)="removeOperation(index)"
+                    >
+                      ✕
+                    </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="5" class="empty">Операцій ще немає</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        @if (errorOf(form.operations); as error) {
+          <p class="error" role="alert">{{ error }}</p>
+        }
+
+        <div class="operations-footer">
+          <button
+            type="button"
+            class="secondary small"
+            [disabled]="form.operations.length >= operationsMax"
+            (click)="addOperation()"
+          >
+            + Додати операцію
+          </button>
+          <span>
+            Сумарна тривалість: <strong>{{ total() }}</strong>
+          </span>
+        </div>
+        <p class="hint">
+          Тривалість {{ durationHint }}. Номери операцій (005, 010…) призначаються автоматично за
+          порядком у маршруті.
+        </p>
+      </fieldset>
+
+      @if (serverError(); as error) {
+        <p class="error" role="alert">{{ error }}</p>
+      }
+
+      <div class="form-actions">
+        <button type="submit" [disabled]="form().submitting()">
+          {{ isEdit() ? 'Зберегти зміни' : 'Створити карту' }}
+        </button>
+        <a
+          class="button ghost"
+          [routerLink]="isEdit() ? ['/process-cards', id()] : ['/process-cards']"
+        >
+          Скасувати
+        </a>
+      </div>
+    </form>
+  }
+</section>

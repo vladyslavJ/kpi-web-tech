@@ -1,0 +1,62 @@
+.card-form {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.part {
+  max-width: 40rem;
+}
+
+.operations {
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+legend {
+  margin-bottom: 0.5rem;
+  padding: 0;
+  font-weight: 600;
+}
+
+td {
+  vertical-align: top;
+}
+
+td input,
+td select {
+  padding: 0.45rem 0.6rem;
+}
+
+td .error {
+  margin-top: 0.3rem;
+  font-size: 0.8rem;
+}
+
+.number {
+  padding-top: 1.15rem;
+}
+
+.type {
+  min-width: 11rem;
+}
+
+.duration {
+  width: 9rem;
+  min-width: 7rem;
+}
+
+.actions {
+  width: 1%;
+}
+
+.operations-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}

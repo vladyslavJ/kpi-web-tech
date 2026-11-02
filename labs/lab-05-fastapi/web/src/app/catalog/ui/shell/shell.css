@@ -1,0 +1,73 @@
+:host {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 100dvh;
+}
+
+.topbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+  padding: 0.75rem 1.25rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  display: grid;
+  color: inherit;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.brand .eyebrow {
+  margin: 0;
+  font-size: 0.72rem;
+}
+
+nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+nav a {
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  color: var(--muted);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+nav a.active {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.database {
+  margin-left: auto;
+}
+
+.database::before {
+  content: '';
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  margin-right: 0.4rem;
+  border-radius: 50%;
+  background: currentColor;
+  vertical-align: 0.05rem;
+}
+
+main {
+  width: min(100%, 76rem);
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 2.5rem;
+}
+
+@media (max-width: 720px) {
+  .database {
+    margin-left: 0;
+  }
+}

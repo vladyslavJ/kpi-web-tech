@@ -1,0 +1,67 @@
+<div class="page">
+  <section class="panel intro" aria-labelledby="home-title">
+    <div>
+      <p class="eyebrow">REST API · FastAPI · MongoDB</p>
+      <h1 id="home-title">Технологічні карти деталей</h1>
+      <p class="lead">
+        Технологічна карта описує маршрут обробки деталі: послідовність операцій із видом обробки,
+        обладнанням і тривалістю. Дані зберігаються в MongoDB, а клієнт працює з ними через REST API
+        на FastAPI з повним циклом CRUD. Усі запити можна переглянути й випробувати на сторінці
+        «API».
+      </p>
+    </div>
+    <div class="toolbar">
+      <a class="button" routerLink="/process-cards/new">Нова технологічна карта</a>
+      <a class="button secondary" routerLink="/parts/new">Додати деталь</a>
+      <a class="button secondary" routerLink="/docs">Відкрити API</a>
+    </div>
+  </section>
+
+  @if (loadError(); as error) {
+    <p class="error" role="alert">{{ error }}</p>
+  }
+
+  <section class="tiles" aria-label="Показники">
+    @for (tile of tiles(); track tile.label) {
+      <a class="tile" [routerLink]="tile.link">
+        <span class="value">{{ tile.value }}</span>
+        <span class="label">{{ tile.label }}</span>
+      </a>
+    }
+  </section>
+
+  <section class="panel" aria-labelledby="workload-title">
+    <div class="panel-header">
+      <div>
+        <h2 id="workload-title">Трудомісткість за видами обробки</h2>
+        <p class="meta">
+          Сума тривалості операцій у всіх картах, яку рахує агрегація MongoDB (GET /api/statistics)
+        </p>
+      </div>
+      <button
+        type="button"
+        class="ghost small"
+        [disabled]="statistics.isLoading()"
+        (click)="statistics.reload()"
+      >
+        Оновити
+      </button>
+    </div>
+
+    <ul class="bars">
+      @for (entry of workload(); track entry.id) {
+        <li>
+          <span class="name">{{ entry.name }}</span>
+          <span class="bar" aria-hidden="true"><span [style.width.%]="entry.share"></span></span>
+          <span class="amount">
+            {{ entry.duration }} <span class="muted">· {{ entry.operations }}</span>
+          </span>
+        </li>
+      } @empty {
+        <li class="empty">
+          {{ statistics.isLoading() ? 'Завантаження…' : 'Видів обробки ще немає' }}
+        </li>
+      }
+    </ul>
+  </section>
+</div>

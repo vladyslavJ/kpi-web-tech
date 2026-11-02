@@ -1,0 +1,89 @@
+<section class="panel" aria-labelledby="cards-title">
+  <div class="panel-header">
+    <div>
+      <h1 id="cards-title">Технологічні карти</h1>
+      <p class="meta">GET і POST /api/process-cards · GET, PUT і DELETE /api/process-cards/:id</p>
+    </div>
+    <div class="toolbar">
+      <button
+        type="button"
+        class="ghost small"
+        [disabled]="cards.isLoading()"
+        (click)="cards.reload()"
+      >
+        Оновити
+      </button>
+      <a class="button small" routerLink="/process-cards/new">Нова карта</a>
+    </div>
+  </div>
+
+  @if (loadError(); as error) {
+    <p class="error" role="alert">{{ error }}</p>
+  }
+  @if (actionError(); as error) {
+    <p class="error" role="alert">{{ error }}</p>
+  }
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th scope="col">Деталь</th>
+          <th scope="col">Маршрут обробки</th>
+          <th scope="col" class="num">Операцій</th>
+          <th scope="col" class="num">Тривалість</th>
+          <th scope="col">Оновлено</th>
+          <th scope="col"><span class="visually-hidden">Дії</span></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of rows(); track row.card.id) {
+          <tr [attr.aria-busy]="busyId() === row.card.id">
+            <td class="part">
+              <a class="code" [routerLink]="['/process-cards', row.card.id]">
+                {{ row.card.part.designation }}
+              </a>
+              <span>{{ row.card.part.name }}</span>
+            </td>
+            <td>
+              <ol class="route" [attr.aria-label]="'Маршрут: ' + row.route.join(', ')">
+                @for (step of row.route; track $index) {
+                  <li>
+                    <span>{{ step }}</span>
+                  </li>
+                }
+              </ol>
+            </td>
+            <td class="num">{{ row.card.operations.length }}</td>
+            <td class="num">{{ row.duration }}</td>
+            <td>{{ row.card.updatedAt | date: 'dd.MM.yyyy HH:mm' }}</td>
+            <td class="actions">
+              <a class="button ghost small" [routerLink]="['/process-cards', row.card.id, 'edit']">
+                Редагувати
+              </a>
+              <button
+                type="button"
+                class="ghost small danger"
+                [disabled]="busyId() !== null"
+                (click)="remove(row.card)"
+              >
+                Видалити
+              </button>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" class="empty">
+              {{ cards.isLoading() ? 'Завантаження…' : 'Технологічних карт ще немає' }}
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <p class="hint">
+    Для кожної деталі існує не більше однієї технологічної карти. Операції нумеруються з кроком 5
+    (005, 010, 015…), як у маршрутних картах.
+  </p>
+</section>

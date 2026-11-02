@@ -1,0 +1,72 @@
+:host {
+  display: block;
+}
+
+h1 {
+  font-size: 1.35rem;
+}
+
+h1 .code {
+  font-size: 0.9em;
+}
+
+h2 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.summary div {
+  padding: 0.75rem 1rem;
+  background: var(--surface-2);
+  border-radius: 10px;
+}
+
+dt {
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+dd {
+  margin: 0.15rem 0 0;
+  font-weight: 600;
+}
+
+tfoot th,
+tfoot td {
+  border-bottom: 0;
+}
+
+tfoot th {
+  color: var(--text);
+  font-size: 0.9rem;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.share {
+  width: 20%;
+  min-width: 7rem;
+  vertical-align: middle;
+}
+
+.bar {
+  display: block;
+  height: 0.5rem;
+  overflow: hidden;
+  background: var(--surface-2);
+  border-radius: 999px;
+}
+
+.bar span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  border-radius: inherit;
+}
