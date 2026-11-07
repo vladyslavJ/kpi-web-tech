@@ -1,0 +1,31 @@
+[project]
+name = "lab-06-mcp"
+version = "1.0.0"
+description = "MCP server with read-only tools for the process cards MongoDB database"
+requires-python = ">=3.12"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src"]
+extend-exclude = [".venv"]
+
+[tool.ruff.format]
+quote-style = "single"
+
+[tool.ruff.lint]
+select = ["E", "W", "F", "I", "N", "B", "UP", "SIM", "RUF", "S", "PTH", "RET", "C4", "PIE", "PL", "ASYNC"]
+ignore = ["PLR2004", "PLR0913", "RUF001"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+mypy_path = "src"
+packages = ["process_cards_mcp"]
+plugins = ["pydantic.mypy"]
+warn_unreachable = true
+
+[tool.pytest.ini_options]
+pythonpath = ["src", "../tmp/tests"]
+testpaths = ["../tmp/tests"]
+addopts = "-ra"

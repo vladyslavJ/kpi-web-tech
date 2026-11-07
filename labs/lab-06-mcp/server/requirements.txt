@@ -1,0 +1,4 @@
+mcp==2.3.0
+pydantic-settings==2.16.2
+pymongo==4.19.0
+uvicorn==0.54.0
